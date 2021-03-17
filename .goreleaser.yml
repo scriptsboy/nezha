@@ -1,0 +1,34 @@
+before:
+  hooks:
+    - go mod tidy -v
+builds:
+  - id: nezha-agent
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - arm
+      - arm64
+      - 386
+      - amd64
+      - mips
+      - mips64
+    gomips:
+      - softfloat
+    main: ./cmd/agent
+    binary: nezha-agent
+checksum:
+  name_template: "checksums.txt"
+snapshot:
+  name_template: "{{.ProjectName}}"
+archives:
+  - name_template: "nezha-agent_{{ .Os }}_{{ .Arch }}"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"

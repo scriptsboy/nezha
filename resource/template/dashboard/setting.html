@@ -1,0 +1,77 @@
+{{define "dashboard/setting"}}
+{{template "common/header" .}}
+{{template "common/menu" .}}
+<div class="nb-container">
+    <div class="ui container">
+        <form id="settingForm" class="ui large form" onsubmit="return false;">
+            <div class="field">
+                <label>站点标题</label>
+                <input type="text" name="Title" placeholder="哪吒监控" value="{{.Conf.Site.Brand}}">
+            </div>
+            <div class="field">
+                <label>管理员列表</label>
+                <input type="text" name="Admin" placeholder="1010,2020" value="{{.Conf.Oauth2.Admin}}">
+            </div>
+            <div class="field">
+                <select name="Theme">
+                    <option value="default"{{if eq .Conf.Site.Theme "default"}} selected="selected"{{end}}>默认主题</option>
+                    <option value="daynight"{{if eq .Conf.Site.Theme "daynight"}} selected="selected"{{end}}>JackieSung DayNight</option>
+                    <option value="hotaru"{{if eq .Conf.Site.Theme "hotaru"}} selected="selected"{{end}}>CokeMine Hotaru</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>自定义代码(style、script 都可以)</label>
+                <textarea name="CustomCode">{{.Conf.Site.CustomCode}}</textarea>
+            </div>
+            <div class="field">
+                <label>前台查看密码</label>
+                <input type="text" name="ViewPassword" placeholder="" value="{{.Conf.Site.ViewPassword}}">
+            </div>
+            <div class="field">
+                <div class="ui nf-ssl checkbox">
+                    <input name="EnableIPChangeNotification" type="checkbox" tabindex="0" class="hidden">
+                    <label>开启 IP 变更提醒</label>
+                </div>
+            </div>
+            <button class="ui button" type="submit">保存</button>
+        </form>
+    </div>
+</div>
+{{template "common/footer" .}}
+<script>
+    $('#settingForm').submit(function () {
+        $.post('/api/setting', $('#settingForm').serialize()).then((resp) => {
+            if (resp.code == 200) {
+                $.suiAlert({
+                    title: '',
+                    description: '修改成功',
+                    type: 'success',
+                    time: '3',
+                    position: 'top-center',
+                });
+            } else {
+                $.suiAlert({
+                    title: '',
+                    description:resp.message,
+                    type: 'error',
+                    time: '3',
+                    position: 'top-center',
+                });
+            }
+        }).error(err => {
+            $.suiAlert({
+                title: '',
+                description:err,
+                type: 'error',
+                time: '3',
+                position: 'top-center',
+            });
+        })
+        return false;
+    })
+    $('.checkbox').checkbox()
+    {{if .Conf.EnableIPChangeNotification}}
+    $('.checkbox').checkbox('set checked')
+    {{end}}
+</script>
+{{end}}
